@@ -4,6 +4,13 @@
 1. Clona el repositorio:
    ```bash
    git clone https://github.com/KevinEs14/flutter_challenge
+2. Ejecuta el siguiente comando para tener todas las dependencias:
+   
+   'flutter pub get'
+
+3. Finalmente, ejecuta la aplicación:
+
+   'flutter run'
 
 ## Descripción del Proyecto
 
