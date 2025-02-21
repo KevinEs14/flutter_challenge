@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_challenge/repositories/item_repository_http.dart';
 import 'package:flutter_challenge/viewModels/item_provider.dart';
 import 'package:flutter_challenge/viewModels/theme_provider.dart';
-import 'package:flutter_challenge/views/home_view.dart';
+import 'package:flutter_challenge/views/home_view/home_view.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_challenge/theme/colors.dart' as t;

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_challenge/viewModels/item_provider.dart';
 import 'package:flutter_challenge/viewModels/theme_provider.dart';
-import 'package:flutter_challenge/views/specific_item_view.dart';
+import 'package:flutter_challenge/views/home_view/widgets/item_card.dart';
+import 'package:flutter_challenge/views/specific_item_view/specific_item_view.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_challenge/theme/colors.dart' as t;
 class HomeView extends StatefulWidget {
@@ -47,7 +48,7 @@ class _HomeViewState extends State<HomeView> {
                   },
                   decoration: InputDecoration(
                     hintText: 'Search the complete name of an item',
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(t.BorderRadius.r30)),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(t.BorderRadius.r16)),
                   ),
                 ),
             )
@@ -94,12 +95,18 @@ class _HomeViewState extends State<HomeView> {
                   }
                 }
                 final item=itemProvider.itemsList[index];
-                return ListTile(
-                  title: Text(item.title),
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>SpecificItemView(itemId: item.id)));
-                  },
+                return ItemCard(
+                    title: item.title,
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>SpecificItemView(itemId: item.id)));
+                    }
                 );
+                // return ListTile(
+                //   title: Text(item.title),
+                //   onTap: (){
+                //     Navigator.push(context, MaterialPageRoute(builder: (context)=>SpecificItemView(itemId: item.id)));
+                //   },
+                // );
               }
             ),
     );
