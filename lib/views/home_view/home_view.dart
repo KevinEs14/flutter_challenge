@@ -101,12 +101,6 @@ class _HomeViewState extends State<HomeView> {
                       Navigator.push(context, MaterialPageRoute(builder: (context)=>SpecificItemView(itemId: item.id)));
                     }
                 );
-                // return ListTile(
-                //   title: Text(item.title),
-                //   onTap: (){
-                //     Navigator.push(context, MaterialPageRoute(builder: (context)=>SpecificItemView(itemId: item.id)));
-                //   },
-                // );
               }
             ),
     );
