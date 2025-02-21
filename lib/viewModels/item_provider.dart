@@ -5,6 +5,7 @@ import 'package:flutter_challenge/repositories/item_repository.dart';
 class ItemProvider with ChangeNotifier{
   final ItemRepository itemRepository;
   List<ItemModel> _itemList=[];
+  ItemModel? _searchedItem;
   bool _isLoading=false;
   String? _errorMessage; //tal vez aca puedo darle directo null
 
@@ -13,6 +14,7 @@ class ItemProvider with ChangeNotifier{
   List<ItemModel> get itemsList=>_itemList;
   bool get isLoading=>_isLoading;
   String? get errorMessage=>_errorMessage;
+  ItemModel? get searchedItem=>_searchedItem;
 
   //Function for list of items with managing of error message
   Future<void> getItemsList(int page)async {
@@ -40,4 +42,10 @@ class ItemProvider with ChangeNotifier{
       return null;
     }
   }
+
+  void searchSpecificItem(String title){
+    _searchedItem=_itemList.firstWhere((item)=> item.title==title, orElse: ()=>ItemModel(id: -1, title: "No se encontró", body: ""));
+    notifyListeners();
+  }
+
 }
