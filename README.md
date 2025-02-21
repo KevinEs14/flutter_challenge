@@ -1,4 +1,9 @@
 # README
+## Instalación
+
+1. Clona el repositorio:
+   ```bash
+   git clone https://github.com/KevinEs14/flutter_challenge
 
 ## Descripción del Proyecto
 
@@ -21,7 +26,7 @@ La aplicación incluye un buscador que permite a los usuarios filtrar rápidamen
 
 ### Paginación
 
-Para manejar grandes cantidades de datos, implementé la paginación en la lista de ítems, mostrando de 20 en 20 los items. Esto asegura que la aplicación no se sature con demasiados elementos cargados a la vez, mejorando el rendimiento y la velocidad de carga.
+Implementé la paginación en la lista de ítems, mostrando de 20 en 20 los items. Esto ayuda a que se reduzca la carga del servidor y que en el frontend la carga sea más rápida.
 
 ### Archivos de Temas
 
@@ -31,8 +36,16 @@ Hice uso de un archivo específico para los colores, tamaños de espacios, borde
 
 Hice uso de la librería `dotenv` para manejar variables globales, en este caso la URL de la API. Esto permite una configuración más flexible y segura, ya que las credenciales y otros parámetros sensibles no están hardcodeados en el código fuente.
 
-## Instalación
+## Observaciones
 
-1. Clona el repositorio:
-   ```bash
-   git clone https://github.com/KevinEs14/flutter_challenge
+### El buscador
+
+La búsqueda está limitada a ingresar todo el nombre para encontrarlo. Esto se debe a una limitación con el endpoint ya que no permite realizar búsquedas por letra ingresada. Se podría hacer en la parte del frontend una vez agarrada la lista pero eso perjudica a la paginación que se implementó.
+
+### El diseño 
+
+El diseño está limitado debido a los atributos con los que se cuenta en el modelo, de tener algún atributo de imagen se podrían implementar widgets más atrayentes para el usuario.
+
+
+
+
