@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_challenge/models/item_model.dart';
 import 'package:flutter_challenge/viewModels/item_provider.dart';
 import 'package:flutter_challenge/viewModels/theme_provider.dart';
 import 'package:flutter_challenge/views/specific_item_view.dart';
@@ -15,36 +14,16 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   int currentPage=1;
   final TextEditingController _searchController=TextEditingController();
-  List<ItemModel> _itemList=[];
-  List<ItemModel> _filteredList=[];
+  final ScrollController _listController=ScrollController();
   
   @override
   void initState(){
     super.initState();
-    _getItemsList();
+    Future.microtask((){_getItemsList();});
   }
   
-  void _getItemsList(){
-    Provider.of<ItemProvider>(context, listen: false).getItemsList(currentPage).then((_) {
-      setState(() {
-        _itemList = Provider.of<ItemProvider>(context, listen: false).itemsList;
-        _filteredList = _itemList;
-      });
-    }).catchError((error) {
-      print('Error al obtener la lista: $error');//manejar mejor esto
-    });
-  }
-  
-  void _searchItem(String titleSearched){
-    if(titleSearched.isNotEmpty){
-      setState(() {
-        _filteredList=_itemList.where((item)=>item.title.toLowerCase().contains(titleSearched.toLowerCase())).toList();
-      });
-    }else{
-      setState(() {
-        _filteredList=_itemList;
-      });
-    }
+  void _getItemsList({String? searchItem, bool init=false}){
+    Provider.of<ItemProvider>(context, listen: false).getItemsList(currentPage, searchItem: searchItem,init: init);
   }
 
   @override
@@ -60,10 +39,14 @@ class _HomeViewState extends State<HomeView> {
                 child: TextField(
                   controller: _searchController,
                   onChanged: (value){
-                    _searchItem(value);
+                    if(value.isNotEmpty) {
+                      _getItemsList(searchItem: value, init: true);
+                    }else{
+                      _getItemsList(init: true);
+                    }
                   },
                   decoration: InputDecoration(
-                    hintText: 'Busca el nombre de un item',
+                    hintText: 'Search the complete name of an item',
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(t.BorderRadius.r30)),
                   ),
                 ),
@@ -77,11 +60,40 @@ class _HomeViewState extends State<HomeView> {
         child: Icon(Icons.sunny),
       ),
       body: itemProvider.isLoading?Center(child: CircularProgressIndicator(),):
-            itemProvider.errorMessage!=null? Center(child: Text(itemProvider.errorMessage!))
+            itemProvider.errorListMessage!=null? Center(child: Text(itemProvider.errorListMessage!))
       : ListView.builder(
-              itemCount: _filteredList.length,
+              itemCount: itemProvider.itemsList.length+1,
+              controller: _listController..addListener(
+                () {
+                if (_listController.offset ==
+                _listController.position.maxScrollExtent &&
+                !itemProvider.isLoadingItems ) {
+                  currentPage++;
+                  _getItemsList();
+                }
+                }
+              ),
               itemBuilder: (context, index){
-                final item=_filteredList[index];
+                if(index==itemProvider.itemsList.length){
+                  if(itemProvider.isLoadingItems){
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(t.Spacing.s12),
+                          child: SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+                      ],
+                    );
+                  }else{
+                    return SizedBox.shrink();
+                  }
+                }
+                final item=itemProvider.itemsList[index];
                 return ListTile(
                   title: Text(item.title),
                   onTap: (){

@@ -5,47 +5,69 @@ import 'package:flutter_challenge/repositories/item_repository.dart';
 class ItemProvider with ChangeNotifier{
   final ItemRepository itemRepository;
   List<ItemModel> _itemList=[];
+  ItemModel? _itemDetail;
   ItemModel? _searchedItem;
+  bool _isLoadingItems=false;
+  bool _listEnd=false;
   bool _isLoading=false;
-  String? _errorMessage; //tal vez aca puedo darle directo null
+  String? _errorListMessage;
+  String? _errorDetailMessage;
 
   ItemProvider(this.itemRepository);
 
   List<ItemModel> get itemsList=>_itemList;
+  ItemModel? get itemDetail=>_itemDetail;
+  bool get isLoadingItems=>_isLoadingItems;
   bool get isLoading=>_isLoading;
-  String? get errorMessage=>_errorMessage;
+
+  String? get errorListMessage=>_errorListMessage;
+  String? get errorDetailMessage=>_errorDetailMessage;
   ItemModel? get searchedItem=>_searchedItem;
 
   //Function for list of items with managing of error message
-  Future<void> getItemsList(int page)async {
-    _isLoading=true;
+  Future<void> getItemsList(int page, {String? searchItem, bool init=false})async {
+    _errorListMessage=null;
+    if(init){
+      page=0;
+      _itemList=[];
+      _listEnd=false;
+    }
+    if(_listEnd){return;}
+    if(page==0){
+      _isLoading=true;
+    }else{
+      _isLoadingItems=true;
+    }
     notifyListeners();
     try{
-      _itemList=await itemRepository.getItemsList(page);
-      _errorMessage=null;
+      final partialList=await itemRepository.getItemsList(page, searchItem: searchItem);
+      _itemList.addAll(partialList);
+      if(partialList.isEmpty){
+        _listEnd=true;
+      }
+      _errorListMessage=null;
     }catch (e){
-      _errorMessage=e.toString();
+      _errorListMessage=e.toString();
       notifyListeners();
     }finally{
+      _isLoadingItems=false;
       _isLoading=false;
       notifyListeners();
     }
   }
 
   //Function for item details with managing of error message
-  Future<ItemModel?> getItemDetails(int id)async{//Revisar el uso de tipo null y el notifyListeners en el error.
+  Future<void> getItemDetails(int id)async{
     try{
-      return await itemRepository.getItemDetails(id);
-    }catch (e){
-      _errorMessage=e.toString();
+      _itemDetail=null;
+      _errorDetailMessage=null;
       notifyListeners();
-      return null;
+      _itemDetail= await itemRepository.getItemDetails(id);
+      notifyListeners();
+    }catch (e){
+      _errorDetailMessage=e.toString();
+      notifyListeners();
     }
-  }
-
-  void searchSpecificItem(String title){
-    _searchedItem=_itemList.firstWhere((item)=> item.title==title, orElse: ()=>ItemModel(id: -1, title: "No se encontró", body: ""));
-    notifyListeners();
   }
 
 }
